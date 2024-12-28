@@ -185,9 +185,7 @@ const ReadCom = () => {
 	const checkIfSurahInTheList = useCallback((): boolean => {
 		let isDuplicated = false;
 
-		state.list.map(
-			(surah: SurahType) => surah.number == surahNumber && (isDuplicated = true)
-		);
+		
 
 		return isDuplicated;
 	}, [state.list, surahNumber]);
@@ -285,6 +283,7 @@ const ReadCom = () => {
                   onclick={() => setSelectedLanguage('urdu')}
                 />
                 <Button
+			text=""
                   icon={<MdTranslate size={24} />}
                   customStyles="bg-white text-primary-color px-4 py-2"
                   onclick={() => setShowTranslations(!showTranslations)}
