@@ -1,0 +1,146 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+// 	--primary-color: #0e9f6e;
+// 	--primary-color-4: #18d39f;
+// 	--primary-color-5: #18d39f;
+// 	--primary-color-6: #0ca1eb22;
+// 	--primary-gray: #483d57;
+// 	--primary-gray-2: #7997a8;
+// 	--primary-gray-3: #edf1f4;
+--primary-color: #023020; /* Dark Green - Base Color */
+--primary-color-4: #046c4c; /* Lighter Green */
+--primary-color-5: #04a074; /* Bright Green */
+--primary-color-6: #02302033; /* Semi-Transparent Dark Green */
+--primary-gray: #2e4a3c; /* Greenish Gray */
+--primary-gray-2: #5b8572; /* Muted Greenish Gray */
+--primary-gray-3: #e9f4ee; /* Pale Green Tint */
+
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+@layer base {
+	body {
+		scroll-behavior: smooth;
+		@apply h-screen bg-white;
+	}
+	::-webkit-scrollbar {
+		width: 3px;
+		height: 3px;
+	}
+
+	::-webkit-scrollbar-track {
+		background-color: var(--primary-gray-3);
+		border-radius: 5px;
+	}
+
+	::-webkit-scrollbar-thumb {
+		background: var(--primary-color) !important;
+		border-radius: 10px;
+	}
+
+	audio::-webkit-media-controls-panel {
+		background-color: white;
+		@apply rounded-md;
+	}
+	audio::-webkit-media-controls-enclosure {
+		border-radius: 6px;
+	}
+}
+
+@layer utilities {
+	.f-c {
+		@apply flex justify-center items-center;
+	}
+
+	.amiri-family {
+		font-family: "Amiri Quran", serif;
+	}
+
+	.main-title {
+		@apply w-full text-2xl font-semibold text-start bg-primary-color text-white px-4 py-2 rounded-md shadow-sm border-2 mb-3;
+	}
+
+	// Loading
+	.dots-flow:before {
+		-webkit-animation: dots-flow 0.85s infinite ease;
+		animation: dots-flow 0.85s infinite ease;
+		border-radius: 100%;
+		content: "";
+		height: 16px;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		-webkit-transform: translate(-50%, -40px);
+		transform: translate(-50%, -40px);
+		width: 16px;
+	}
+	@-webkit-keyframes dots-flow {
+		0%,
+		100% {
+			-webkit-box-shadow: -26px 32px 0px 0 white, 0px 32px 0 0 white,
+				26px 32px 0 0 white;
+			box-shadow: -26px 32px 0px 0 white, 0px 32px 0 0 white,
+				26px 32px 0 0 white;
+		}
+		35% {
+			-webkit-box-shadow: -26px 32px 0 4px var(--primary-color),
+				0px 32px 0 0 white, 26px 32px 0 0 white;
+			box-shadow: -26px 32px 0 4px var(--primary-color), 0px 32px 0 0 white,
+				26px 32px 0 0 white;
+		}
+		50% {
+			-webkit-box-shadow: -26px 32px 0 0 white,
+				0px 32px 0 4px var(--primary-color), 26px 32px 0 0 white;
+			box-shadow: -26px 32px 0 0 white, 0px 32px 0 4px var(--primary-color),
+				26px 32px 0 0 white;
+		}
+		65% {
+			-webkit-box-shadow: -26px 32px 0px 0 white, 0px 32px 0 0 white,
+				26px 32px 0 4px var(--primary-color);
+			box-shadow: -26px 32px 0px 0 white, 0px 32px 0 0 white,
+				26px 32px 0 4px var(--primary-color);
+		}
+	}
+	@keyframes dots-flow {
+		0%,
+		100% {
+			-webkit-box-shadow: -26px 32px 0px 0 white, 0px 32px 0 0 white,
+				26px 32px 0 0 white;
+			box-shadow: -26px 32px 0px 0 white, 0px 32px 0 0 white,
+				26px 32px 0 0 white;
+		}
+		35% {
+			-webkit-box-shadow: -26px 32px 0 4px var(--primary-color),
+				0px 32px 0 0 white, 26px 32px 0 0 white;
+			box-shadow: -26px 32px 0 4px var(--primary-color), 0px 32px 0 0 white,
+				26px 32px 0 0 white;
+		}
+		50% {
+			-webkit-box-shadow: -26px 32px 0 0 white,
+				0px 32px 0 4px var(--primary-color), 26px 32px 0 0 white;
+			box-shadow: -26px 32px 0 0 white, 0px 32px 0 4px var(--primary-color),
+				26px 32px 0 0 white;
+		}
+		65% {
+			-webkit-box-shadow: -26px 32px 0px 0 white, 0px 32px 0 0 white,
+				26px 32px 0 4px var(--primary-color);
+			box-shadow: -26px 32px 0px 0 white, 0px 32px 0 0 white,
+				26px 32px 0 4px var(--primary-color);
+		}
+	}
+}
+
+@layer components {
+	.card {
+		@apply w-full lg:max-h-[450px] bg-white py-4;
+		h1 {
+			@apply text-center text-xl font-semibold text-primary-gray;
+		}
+	}
+}
