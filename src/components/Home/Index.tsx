@@ -92,7 +92,7 @@ const Home = () => {
   const initializeData = async () => {
     setIsLoading(true);
     const surahs = await fetchSurahList();
-    if (sortBtnActive === "Juz") {
+    if (sortBtnActive === "Para") {
       await fetchJuzData();
     }
     setIsLoading(false);
@@ -103,7 +103,7 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    if (sortBtnActive === "Juz" && juzData.length === 0) {
+    if (sortBtnActive === "Para" && juzData.length === 0) {
       fetchJuzData();
     }
   }, [sortBtnActive]);
@@ -139,7 +139,7 @@ const Home = () => {
       case "In List":
         handleListSort();
         break;
-      case "Juz":
+      case "Para":
         if (juzData.length === 0) {
           fetchJuzData();
         }
@@ -171,7 +171,7 @@ const Home = () => {
           <div key={juz.number} className="mb-6">
             <div className="mb-4">
               <h2 className="text-2xl font-bold text-gray-100">
-                Juz {juz.number}
+                Para {juz.number}
               </h2>
               {Object.values(juz.surahs)[0] && (
                 <p className="text-sm text-gray-100">
@@ -221,7 +221,7 @@ const Home = () => {
   // Main render function
   const renderContent = () => {
     if (isLoading) return <Loading />;
-    if (sortBtnActive === "Juz" && juzData.length > 0) {
+    if (sortBtnActive === "Para" && juzData.length > 0) {
       return renderJuzView();
     }
     return renderNormalView();
@@ -235,18 +235,9 @@ const Home = () => {
   return (
 	<div className="w-full h-full px-4 bg-[#023020] roundedmd lg:m-0 lg:rounded-lg lg:mt-0">
 	<div className="flex flex-col-reverse items-start justify-between mr-3 sm:flex-row sm:items-center">
-	  {/* <div className="flex gap-3 my-3">
-		{["Number", "Alphabet", "Juz", "In List"].map((sortBtn, index) => (
-		  <SortButton
-			onclick={() => setSortBtnActive(sortBtn)}
-			key={index}
-			text={sortBtn}
-			active={sortBtnActive === sortBtn}
-		  />
-		))}
-	  </div> */}
+	 
 	  <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 mt-4 mb-4 bg-white rounded-md shadow-md">
-  {["Number", "Alphabet", "Juz", "In List"].map((sortBtn, index) => (
+  {["Number", "Alphabet", "Para", "In List"].map((sortBtn, index) => (
     <button
       key={index}
       onClick={() => setSortBtnActive(sortBtn)}
