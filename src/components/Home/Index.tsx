@@ -7,146 +7,274 @@ import SortButton from "../UI/SortButton";
 import Input from "../UI/Input";
 import { useAppSelector } from "@/app/rtk/hooks";
 import Loading from "../UI/Loading";
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Al-Quran',
+  icons: {
+    icon: '/Quran.png',
+  }
+};
 
 export interface AyahType {
-	audio: string;
-	audioSecondary: string[];
-	hizbQuarter: number;
-	juz: number;
-	manzil: number;
-	number: number;
-	numberInSurah: number;
-	page: number;
-	ruku: number;
-	sajda: boolean;
-	text: string;
+  audio: string;
+  audioSecondary: string[];
+  hizbQuarter: number;
+  juz: number;
+  manzil: number;
+  number: number;
+  numberInSurah: number;
+  page: number;
+  ruku: number;
+  sajda: boolean;
+  text: string;
 }
+
 export interface SurahType {
-	ayahs?: AyahType[];
-	englishName: string;
-	englishNameTranslation: string;
-	name: string;
-	number: number;
-	numberOfAyahs: number;
-	revelationType: string;
+  ayahs?: AyahType[];
+  englishName: string;
+  englishNameTranslation: string;
+  name: string;
+  number: number;
+  numberOfAyahs: number;
+  revelationType: string;
+}
+
+interface JuzType {
+  number: number;
+  surahs: {
+    [key: string]: SurahType;
+  };
 }
 
 const Home = () => {
-	const [searchValue, setSearchValue] = useState<string>("");
-	const [sortBtnActive, setSortBtnActive] = useState("Number");
-	const [surahsListOriginal, setSurahsListOriginal] = useState<SurahType[]>([]);
-	const [surahsListToShow, setSurahsListToShow] = useState<SurahType[]>([]);
-	const [searchResults, setSearchResults] = useState<SurahType[]>([]);
-	const [isLoading, setIsLoading] = useState(true);
+  const [searchValue, setSearchValue] = useState<string>("");
+  const [sortBtnActive, setSortBtnActive] = useState("Number");
+  const [surahsListOriginal, setSurahsListOriginal] = useState<SurahType[]>([]);
+  const [surahsListToShow, setSurahsListToShow] = useState<SurahType[]>([]);
+  const [juzData, setJuzData] = useState<JuzType[]>([]);
+  const [searchResults, setSearchResults] = useState<SurahType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-	const surahsList = useAppSelector(state => state.listSlice.list);
+  const surahsList = useAppSelector(state => state.listSlice.list);
 
-	const fetchSurahList = async () => {
-		const res = await axios.get("https://api.alquran.cloud/v1/surah");
-		const { data } = res;
-		setSurahsListToShow(data.data);
-		setSurahsListOriginal(data.data);
-	};
+  // Function to fetch Surah list
+  const fetchSurahList = async () => {
+    try {
+      const response = await axios.get("https://api.alquran.cloud/v1/surah");
+      const surahsData = response.data.data;
+      setSurahsListOriginal(surahsData);
+      setSurahsListToShow(surahsData);
+      return surahsData;
+    } catch (error) {
+      console.error("Error fetching surah list:", error);
+      return [];
+    }
+  };
 
-	useEffect(() => {
-		fetchSurahList();
-	}, []);
+  // Function to fetch Juz data
+  const fetchJuzData = async () => {
+    try {
+      const juzPromises = Array.from({ length: 30 }, (_, i) =>
+        axios.get(`https://api.alquran.cloud/v1/juz/${i + 1}`)
+      );
+      const responses = await Promise.all(juzPromises);
+      const juzList = responses.map(res => res.data.data);
+      setJuzData(juzList);
+      return juzList;
+    } catch (error) {
+      console.error("Error fetching juz data:", error);
+      return [];
+    }
+  };
 
-	useEffect(() => {
-		localStorage.setItem("surahsList", JSON.stringify(surahsList));
-	}, [surahsList]);
+  // Function to initialize data
+  const initializeData = async () => {
+    setIsLoading(true);
+    const surahs = await fetchSurahList();
+    if (sortBtnActive === "Juz") {
+      await fetchJuzData();
+    }
+    setIsLoading(false);
+  };
 
-	const handleSelectedSortOption = useCallback(() => {
-		if (sortBtnActive == "Number") {
-			setSurahsListToShow(surahsListOriginal);
-		} else if (sortBtnActive == "Alphabet") {
-			setSurahsListToShow(() => {
-				let sorted: SurahType[] = Object.assign([], surahsListOriginal);
+  useEffect(() => {
+    initializeData();
+  }, []);
 
-				sorted.sort((a, b) => a.englishName.localeCompare(b.englishName));
+  useEffect(() => {
+    if (sortBtnActive === "Juz" && juzData.length === 0) {
+      fetchJuzData();
+    }
+  }, [sortBtnActive]);
 
-				return sorted;
-			});
-		} else {
-			setSurahsListToShow(surahsList);
-		}
+  // Function to handle number sorting
+  const handleNumberSort = () => {
+    const sorted = [...surahsListOriginal].sort((a, b) => a.number - b.number);
+    setSurahsListToShow(sorted);
+  };
 
-		setTimeout(() => {
-			if (surahsListToShow.length) {
-				setIsLoading(false);
-			} else {
-				setIsLoading(true);
-			}
-		}, 1000);
-	}, [sortBtnActive]);
+  // Function to handle alphabet sorting
+  const handleAlphabetSort = () => {
+    const sorted = [...surahsListOriginal].sort((a, b) => 
+      a.englishName.localeCompare(b.englishName)
+    );
+    setSurahsListToShow(sorted);
+  };
 
-	useEffect(() => {
-		handleSelectedSortOption();
-	}, [handleSelectedSortOption]);
+  // Function to handle list sorting
+  const handleListSort = () => {
+    setSurahsListToShow(surahsList);
+  };
 
-	useEffect(() => {
-		if (!Number.isInteger(Number(searchValue))) {
-			setSearchResults(
-				surahsListToShow.filter(surah =>
-					surah.englishName.toLowerCase().includes(searchValue.toLowerCase())
-				)
-			);
-		} else {
-			setSearchResults(
-				surahsListToShow.filter(surah =>
-					surah.number.toString().includes(searchValue)
-				)
-			);
-		}
-	}, [searchValue]);
+  // Function to handle sort button selection
+  const handleSelectedSortOption = useCallback(() => {
+    switch (sortBtnActive) {
+      case "Number":
+        handleNumberSort();
+        break;
+      case "Alphabet":
+        handleAlphabetSort();
+        break;
+      case "In List":
+        handleListSort();
+        break;
+      case "Juz":
+        if (juzData.length === 0) {
+          fetchJuzData();
+        }
+        break;
+    }
+  }, [sortBtnActive, surahsListOriginal, surahsList]);
 
-	const returnList = (): SurahType[] => {
-		if (searchValue == "") return surahsListToShow;
-		else return searchResults;
-	};
+  useEffect(() => {
+    handleSelectedSortOption();
+  }, [handleSelectedSortOption]);
 
-	return (
-		<div className="w-full h-full bg-slate-50 lg:m-0 rounded-md lg:rounded-lg lg:mt-0 px-4">
-			<div className="flex flex-col-reverse sm:flex-row justify-between items-start sm:items-center mr-3">
-				<div className="flex gap-3 my-3">
-					{["Number", "Alphabet", "In List"].map((sortBtn, index) => (
-						<SortButton
-							onclick={() => setSortBtnActive(sortBtn)}
-							key={index}
-							text={sortBtn}
-							active={sortBtnActive == sortBtn ? true : false}
-						/>
-					))}
-				</div>
-				<div className="w-full sm:w-[250px] md:w-[300px] xl:w-[500px] mt-3 sm:mt-0">
-					<Input
-						type="text"
-						value={searchValue}
-						onchange={setSearchValue}
-						placeholder="Al-Baqara, 2, etc..."
-					/>
-				</div>
-			</div>
-			{surahsListToShow.length ? (
-				<div className="h-[calc(100%-109px)] lg:h-[calc(100vh-162px)] overflow-y-scroll">
-					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 justify-between gap-3 pr-3 [&:last-child]:mb-3">
-						{returnList().map(surah => (
-							<SurahCard key={surah.number} surah={surah} />
-						))}
-					</div>
-				</div>
-			) : searchValue != "" ? (
-				<h2 className="text-center">
-					{" "}
-					&quot;{searchValue}&quot; does not match any results!
-				</h2>
-			) : isLoading ? (
-				<Loading />
-			) : (
-				<h2 className="text-center py-6">No items!</h2>
-			)}
-		</div>
-	);
+  // Function to handle search
+  useEffect(() => {
+    const filteredResults = surahsListToShow.filter(surah => {
+      if (!Number.isInteger(Number(searchValue))) {
+        return surah.englishName.toLowerCase().includes(searchValue.toLowerCase());
+      } else {
+        return surah.number.toString().includes(searchValue);
+      }
+    });
+    setSearchResults(filteredResults);
+  }, [searchValue, surahsListToShow]);
+
+  // Function to render Juz view
+  const renderJuzView = () => {
+    return (
+      <div className="pr-3 space-y-8">
+        {juzData.map((juz) => (
+          <div key={juz.number} className="mb-6">
+            <div className="mb-4">
+              <h2 className="text-2xl font-bold text-gray-100">
+                Juz {juz.number}
+              </h2>
+              {Object.values(juz.surahs)[0] && (
+                <p className="text-sm text-gray-100">
+                  Starts from: {Object.values(juz.surahs)[0].englishName}
+                </p>
+              )}
+            </div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+              {Object.values(juz.surahs).map((surah: SurahType) => (
+                <SurahCard 
+                  key={`${juz.number}-${surah.number}`} 
+                  surah={surah}
+                />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  // Function to render normal view
+  const renderNormalView = () => {
+    const displayList = searchValue ? searchResults : surahsListToShow;
+
+    if (displayList.length === 0 && searchValue) {
+      return (
+        <h2 className="text-center text-white">
+          &quot;{searchValue}&quot; does not match any results!
+        </h2>
+      );
+    }
+
+    if (displayList.length === 0) {
+      return <h2 className="py-6 text-center text-white" >No items!</h2>;
+    }
+
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 justify-between gap-3 pr-3 [&:last-child]:mb-3">
+        {displayList.map(surah => (
+          <SurahCard key={surah.number} surah={surah} />
+        ))}
+      </div>
+    );
+  };
+
+  // Main render function
+  const renderContent = () => {
+    if (isLoading) return <Loading />;
+    if (sortBtnActive === "Juz" && juzData.length > 0) {
+      return renderJuzView();
+    }
+    return renderNormalView();
+  };
+
+  // Save to localStorage
+  useEffect(() => {
+    localStorage.setItem("surahsList", JSON.stringify(surahsList));
+  }, [surahsList]);
+
+  return (
+	<div className="w-full h-full px-4 bg-[#023020] roundedmd lg:m-0 lg:rounded-lg lg:mt-0">
+	<div className="flex flex-col-reverse items-start justify-between mr-3 sm:flex-row sm:items-center">
+	  {/* <div className="flex gap-3 my-3">
+		{["Number", "Alphabet", "Juz", "In List"].map((sortBtn, index) => (
+		  <SortButton
+			onclick={() => setSortBtnActive(sortBtn)}
+			key={index}
+			text={sortBtn}
+			active={sortBtnActive === sortBtn}
+		  />
+		))}
+	  </div> */}
+	  <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 mt-4 mb-4 bg-white rounded-md shadow-md">
+  {["Number", "Alphabet", "Juz", "In List"].map((sortBtn, index) => (
+    <button
+      key={index}
+      onClick={() => setSortBtnActive(sortBtn)}
+      className={`px-4 py-2 text-sm font-medium rounded-md transition ${
+        sortBtnActive === sortBtn
+          ? "bg-[#023020] text-white shadow-md"
+          : "bg-gray-300 text-gray-900 hover:bg-gray-200"
+      }`}
+    >
+      {sortBtn}
+    </button>
+  ))}
+</div>
+
+	  <div className="w-full sm:w-[250px] md:w-[300px] xl:w-[500px] mt-3 sm:mt-0">
+		<Input
+		  type="text"
+		  value={searchValue}
+		  onchange={setSearchValue}
+		  placeholder="Al-Baqara, 2, etc..."
+		/>
+	  </div>
+	</div>
+	<div className="h-[calc(100%-109px)] lg:h-[calc(100vh-162px)] overflow-y-scroll">
+	  {renderContent()}
+	</div>
+  </div>
+);
 };
 
 export default Home;
