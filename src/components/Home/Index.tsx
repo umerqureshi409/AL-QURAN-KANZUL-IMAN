@@ -236,7 +236,7 @@ const Home = () => {
 	<div className="w-full h-full px-4 bg-[#023020] roundedmd lg:m-0 lg:rounded-lg lg:mt-0">
 	<div className="flex flex-col-reverse items-start justify-between mr-3 sm:flex-row sm:items-center">
 	 
-	  <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 mt-4 mb-4 bg-white rounded-md shadow-md">
+	  <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 mt-4 mb-4 bg-white rounded-md shadow-md">
   {["Number", "Alphabet", "Para", "In List"].map((sortBtn, index) => (
     <button
       key={index}
