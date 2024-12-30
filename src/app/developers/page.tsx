@@ -19,7 +19,7 @@ const Index = () => {
     social: {
       github: "https://github.com/umerqureshi409",
       Instagram: "https://instagram.com/umerqureshi409",
-      linkedin: "www.linkedin.com/in/umer-qureshi-526118259",
+      linkedin: "https://linkedin.com/in/umer-qureshi-526118259",
       email: "mailto:aa1660025@gmail.com"
     }
   };
