@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Button from '@/components/UI/Button';
 import Loading from '@/components/UI/Loading';
 
 interface AIResponse {
@@ -19,6 +18,31 @@ interface GeminiResponse {
     };
   }>;
 }
+
+interface CustomButtonProps {
+  text: string;
+  customStyles: string;
+  type?: "button" | "submit" | "reset";
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  disabled?: boolean;
+}
+
+const CustomButton: React.FC<CustomButtonProps> = ({
+  text,
+  customStyles,
+  type = "button",
+  onClick,
+  disabled = false
+}) => (
+  <button
+    type={type}
+    onClick={onClick}
+    disabled={disabled}
+    className={`${customStyles} rounded transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-opacity-50 focus:ring-primary-color disabled:opacity-60`}
+  >
+    {text}
+  </button>
+);
 
 export default function AIPage() {
   const [prompt, setPrompt] = useState('');
@@ -59,13 +83,6 @@ export default function AIPage() {
     }
   };
 
-  const handleAskQuestion = (e: React.MouseEvent) => {
-    if (isLoading || !prompt.trim()) {
-      e.preventDefault();
-      return;
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-color-5 to-primary-color">
       <div className="container px-4 py-8 mx-auto">
@@ -94,20 +111,20 @@ export default function AIPage() {
               </div>
 
               <div className="flex justify-end gap-4">
-                <Button
+                <CustomButton
                   text="Back"
-                  customStyles="bg-gray-500 text-white px-6 py-2 hover:bg-gray-600 transition-colors"
-                  onclick={() => router.back()}
+                  customStyles="bg-gray-500 text-white px-6 py-2 hover:bg-gray-600"
+                  onClick={() => router.back()}
                 />
-                <Button
+                <CustomButton
                   text={isLoading ? 'Processing...' : 'Ask Question'}
                   customStyles={`${
                     isLoading || !prompt.trim() 
                       ? 'bg-gray-400 cursor-not-allowed' 
                       : 'bg-primary-color hover:bg-primary-color/90'
-                  } text-white px-6 py-2 transition-colors`}
-                  onclick={handleAskQuestion}
+                  } text-white px-6 py-2`}
                   type="submit"
+                  disabled={isLoading || !prompt.trim()}
                 />
               </div>
             </form>
