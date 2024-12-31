@@ -150,11 +150,11 @@ const Navbar = () => {
 						link="list"
 						icon={<AiOutlineUnorderedList size={25} />}
 					/>
-					<NavLink
+{/* 					<NavLink
 						linkName="ai"
 						link="ai"
 						icon={<Bot size={25} />}
-					/>
+					/> */}
 					<NavLink
 						linkName="schedule"
 						link="schedule"
