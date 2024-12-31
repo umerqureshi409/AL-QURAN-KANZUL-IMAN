@@ -93,7 +93,7 @@ import Button from "../UI/Button";
 import { useMediaQuery } from "react-responsive";
 import Link from "next/link";
 import { FaCode } from "react-icons/fa";
-import {  ReceiptText } from 'lucide-react';
+import {  Bot, ReceiptText } from 'lucide-react';
 
 const Navbar = () => {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -149,6 +149,11 @@ const Navbar = () => {
 						linkName="list"
 						link="list"
 						icon={<AiOutlineUnorderedList size={25} />}
+					/>
+					<NavLink
+						linkName="ai"
+						link="ai"
+						icon={<Bot size={25} />}
 					/>
 					<NavLink
 						linkName="schedule"
