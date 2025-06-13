@@ -288,8 +288,8 @@ const ReadCom = () => {
               dir={selectedLanguage === "arabic" ? "rtl" : "ltr"}
             >
               {surah.ayahs?.map((ayah: AyahType) => (
-                <div className="py-6 px-2 border-b border-gray-200 last:border-b-0" key={ayah.number}>
-                  <div className="flex items-start gap-4 max-w-4xl mx-auto">
+                <div className="py-4 px-2 border-b border-gray-200 last:border-b-0" key={ayah.number}>
+                  <div className="flex items-start gap-3 max-w-4xl mx-auto">
                     <div className="relative min-w-[40px] h-[40px] mt-1">
                       <span className="absolute text-sm font-bold top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2">
                         {ayah.number}
@@ -303,8 +303,8 @@ const ReadCom = () => {
                       />
                     </div>
                     <div className="flex-1">
-                      <p
-                        className={`text-xl md:text-2xl leading-relaxed whitespace-normal ${
+                      <h1
+                        className={`text-xl md:text-2xl leading-relaxed whitespace-normal break-words ${
                           selectedLanguage === "arabic" ? "amiri-family text-right" : ""
                         } ${
                           currentAyahNumber === ayah.number
@@ -317,18 +317,24 @@ const ReadCom = () => {
                         }}
                       >
                         {getAyahText(ayah)}
-                      </p>
+                      </h1>
 
                       {showTranslations && (
                         <div className="flex flex-col gap-4 text-base mt-4">
                           {selectedLanguage !== "arabic" && (
-                            <p className="text-primary-gray-600 leading-relaxed text-right amiri-family">{ayah.text}</p>
+                            <p className="text-primary-gray-600 leading-relaxed whitespace-normal break-words text-right amiri-family">
+                              {ayah.text}
+                            </p>
                           )}
                           {selectedLanguage !== "english" && (
-                            <p className="text-primary-gray-600 leading-relaxed">{ayah.englishText}</p>
+                            <p className="text-primary-gray-600 leading-relaxed whitespace-normal break-words">
+                              {ayah.englishText}
+                            </p>
                           )}
                           {selectedLanguage !== "urdu" && (
-                            <p className="text-primary-gray-600 leading-relaxed">{ayah.urduText}</p>
+                            <p className="text-primary-gray-600 leading-relaxed whitespace-normal break-words">
+                              {ayah.urduText}
+                            </p>
                           )}
                         </div>
                       )}
