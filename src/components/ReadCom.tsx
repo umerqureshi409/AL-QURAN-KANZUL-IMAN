@@ -288,8 +288,8 @@ const ReadCom = () => {
               dir={selectedLanguage === "arabic" ? "rtl" : "ltr"}
             >
               {surah.ayahs?.map((ayah: AyahType) => (
-                <div className="py-4 px-2 border-b border-gray-200 last:border-b-0" key={ayah.number}>
-                  <div className="flex items-start gap-3 max-w-4xl mx-auto">
+                <div className="py-6 px-2 border-b border-gray-200 last:border-b-0" key={ayah.number}>
+                  <div className="flex items-start gap-4 max-w-4xl mx-auto">
                     <div className="relative min-w-[40px] h-[40px] mt-1">
                       <span className="absolute text-sm font-bold top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2">
                         {ayah.number}
@@ -303,21 +303,21 @@ const ReadCom = () => {
                       />
                     </div>
                     <div className="flex-1">
-                      <h1
-                        className={`text-xl md:text-2xl leading-loose ${
+                      <p
+                        className={`text-xl md:text-2xl leading-relaxed whitespace-normal ${
                           selectedLanguage === "arabic" ? "amiri-family text-right" : ""
                         } ${
                           currentAyahNumber === ayah.number
                             ? "text-primary-color font-bold active"
                             : "text-primary-gray"
-                        } hover:text-primary-color cursor-pointer break-words`}
+                        } hover:text-primary-color cursor-pointer`}
                         onClick={() => {
                           setCurrentAyahNumber(ayah.number)
                           setCurrentAyah(ayah)
                         }}
                       >
                         {getAyahText(ayah)}
-                      </h1>
+                      </p>
 
                       {showTranslations && (
                         <div className="flex flex-col gap-4 text-base mt-4">
